@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "id": "f814",
+      "username": "farelis30",
+      "fullname": "Muhammad Alfarel Yudistira",
+      "email": "farelyudistira01@gmail.com",
+      "password": "farel123",
+      "balance": 1600000
+    },
+    {
+      "id": "b61a",
+      "username": "rizki",
+      "fullname": "Rizki maulana",
+      "email": "rizki@gmail.com",
+      "password": "rizki123",
+      "balance": 600000
+    },
+    {
+      "id": "a87a",
+      "username": "Nixon",
+      "fullname": "nixon",
+      "email": "nixon@gmail.com",
+      "password": "nixon123",
+      "balance": 300000
+    }
+  ]
+}
