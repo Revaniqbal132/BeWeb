@@ -1,0 +1,124 @@
+/* global.css */
+
+/* Import Tailwind's base, components, and utilities */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles */
+body {
+  @apply font-sans bg-gray-100 text-gray-800;
+}
+
+h1,
+h2,
+h3 {
+  @apply text-gray-800;
+}
+
+a {
+  @apply text-blue-500 hover:text-blue-600;
+}
+
+/* Modal: Ensure it's scrollable on mobile */
+.modal {
+  @apply fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50;
+}
+
+/* Modal Content */
+.modal-content {
+  @apply bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full overflow-auto;
+  max-height: 90vh; /* Allow scroll if content overflows */
+}
+
+/* Responsive Layout for Calendar */
+.calendar-container {
+  @apply w-full max-w-4xl mx-auto;
+}
+
+/* Add padding and margin adjustments for mobile */
+@media (max-width: 640px) {
+  .calendar-container {
+    @apply px-4 py-6;
+  }
+
+  .modal-content {
+    @apply px-4 py-6;
+  }
+
+  h2 {
+    @apply text-xl font-semibold text-center mb-4;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 768px) {
+  .calendar-container {
+    @apply px-6 py-8;
+  }
+
+  .modal-content {
+    @apply px-6 py-8;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold mb-5;
+  }
+}
+
+@media (min-width: 768px) {
+  .calendar-container {
+    @apply px-8 py-12;
+  }
+
+  .modal-content {
+    @apply px-8 py-12;
+  }
+
+  h2 {
+    @apply text-3xl font-semibold mb-6;
+  }
+}
+
+/* Add space between modal content and close button */
+.modal-close-btn {
+  @apply mt-4 text-center bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition duration-200 ease-in-out;
+}
+
+/* Responsive Text Styling */
+h1 {
+  @apply text-4xl font-bold mb-4;
+}
+
+h2 {
+  @apply text-3xl mb-4;
+}
+
+h3 {
+  @apply text-xl mb-3;
+}
+
+/* Table & Card Layouts for Larger Screens */
+.table,
+.card {
+  @apply w-full table-auto border-collapse bg-white rounded-lg shadow-md;
+}
+
+.table td,
+.table th {
+  @apply border p-4 text-sm text-gray-700;
+}
+
+.card {
+  @apply p-6 rounded-lg border shadow-sm hover:shadow-lg transition ease-in-out duration-300;
+}
+
+.card p {
+  @apply mb-2 text-gray-600 text-base;
+}
+
+/* Make the modal scrollable if content overflows */
+@media (min-width: 640px) {
+  .modal-content {
+    @apply max-h-[80vh];
+  }
+}
