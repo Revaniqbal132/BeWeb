@@ -84,7 +84,6 @@
 
 // export default GajiKeseluruhan;
 
-
 //tgl 14 oktober 2024
 // "use client"; // Pastikan ini ditulis dengan benar
 
@@ -202,81 +201,73 @@
 
 // export default Payment;
 
-
 "use client"; // Make sure this is written correctly
 
-import React, { useState, useEffect } from "react";
 import NavbarAdmin from "@/components/NavbarAdmin";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  orderBy,
-} from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import { getAuth } from "firebase/auth";
 import Navbar from "@/components/Navbar";
+import { useEffect, useState } from "react";
 
 const Payment = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
+  const fetchUserData = async () => {
+    try {
+      setIsLoading(true);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setIsLoading(true);
+      // Get the logged-in user's email from Firebase Authentication
+      const auth = getAuth();
+      const user = auth.currentUser;
 
-        // Get the logged-in user's email from Firebase Authentication
-        const auth = getAuth();
-        const user = auth.currentUser;
+      if (user) {
+        const userEmail = user.email;
 
-        if (user) {
-          const userEmail = user.email;
+        // Fetch the userPengajuanCuti collection from Firestore
+        const usersCollection = collection(db, "userPengajuanCuti");
 
-          // Fetch the userPengajuanCuti collection from Firestore
-          const usersCollection = collection(db, "userPengajuanCuti");
+        // Query to filter by the logged-in user's email and order by timeStamp descending
+        // const q = query(
+        //   usersCollection,
+        //   where("email", "==", userEmail),
+        //   orderBy("timeStamp", "desc")
+        // );
 
-          // Query to filter by the logged-in user's email and order by timeStamp descending
-          // const q = query(
-          //   usersCollection,
-          //   where("email", "==", userEmail),
-          //   orderBy("timeStamp", "desc")
-          // );
+        // const q = query(
+        //   usersCollection,
+        //   where("email", "==", userEmail),
+        //   orderBy("timeStamp", "desc")
+        // );
 
-          // const q = query(
-          //   usersCollection,
-          //   where("email", "==", userEmail),
-          //   orderBy("timeStamp", "desc")
-          // );
+        const q = query(
+          usersCollection,
+          orderBy("timeStamp", "desc"),
+          where("email", "==", userEmail)
+        );
 
-          const q = query(
-            usersCollection,
-            orderBy("timeStamp", "desc"),
-            where("email", "==", userEmail)
-          );
-          
-          
+        // Execute query and get the result
+        const querySnapshot = await getDocs(q);
 
-          // Execute query and get the result
-          const querySnapshot = await getDocs(q);
+        // Map the query result to an array
+        const filteredData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-          // Map the query result to an array
-          const filteredData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-          // Set the data to the state
-          setData(filteredData);
-        } else {
-          console.log("User is not logged in");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
+        // Set the data to the state
+        setData(filteredData);
+      } else {
+        console.log("User is not logged in");
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchUserData();
   }, []);
 
@@ -288,11 +279,14 @@ const Payment = () => {
     }
   };
 
+  console.log(data);
   return (
     <div className="bg-sky-200 min-h-screen flex flex-col">
       <Navbar />
       <div className="max-w-9xl mx-auto p-6 bg-sky-300 border rounded-md shadow-md mt-36">
-        <h2 className="text-3xl font-semibold text-center mb-6 text-gray-800">Payment Page</h2>
+        <h2 className="text-3xl font-semibold text-center mb-6 text-gray-800">
+          Payment Page
+        </h2>
         {isLoading ? (
           <div className="flex justify-center items-center">
             <p className="text-xl text-gray-600">Loading...</p>
@@ -306,8 +300,12 @@ const Payment = () => {
                 onClick={() => toggleRow(index)} // Toggle row on click
               >
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold text-lg text-gray-700 mb-11">{item.username}</span>
-                  <span className="text-sm mt-12 items-center text-gray-500">{item.email}</span>
+                  <span className="font-semibold text-lg text-gray-700 mb-11">
+                    {item.username}
+                  </span>
+                  <span className="text-sm mt-12 items-center text-gray-500">
+                    {item.email}
+                  </span>
                 </div>
 
                 {/* Display additional info when row is expanded */}
@@ -318,8 +316,8 @@ const Payment = () => {
                     <p><strong>Total Cuti:</strong> {item.totalCuti}</p>
                     <p><strong>Account Number:</strong> {item.accountNumber}</p>
                     <p><strong>Tanggal Hari Ini:</strong> {item.timeStamp ? new Date(item.timeStamp.seconds * 1000).toLocaleDateString() : ""}</p>
-                    <p><strong>Tanggal Pengajuan Cuti:</strong> {item.startDate}</p>
-                    <p><strong>Tanggal Akhir Cuti:</strong> {item.endDate}</p>
+                    <p><strong>Tanggal Pengajuan Cuti:</strong> {item.startDate ? new Date(item.startDate.seconds * 1000).toLocaleDateString() : ""}</p>
+                    <p><strong>Tanggal Akhir Cuti:</strong>  {item.endDate ? new Date(item.endDate.seconds * 1000).toLocaleDateString() : ""}</p>
                     <p><strong>Amount:</strong> {item.amount}</p>
                     <p><strong>Salary Cut:</strong> {item.salary}</p>
                     <p><strong>Reason:</strong> {item.reason}</p>
@@ -337,7 +335,6 @@ const Payment = () => {
 };
 
 export default Payment;
-
 
 // "use client";
 
@@ -459,8 +456,3 @@ export default Payment;
 // };
 
 // export default Payment;
-
-
-
-
-
