@@ -4524,7 +4524,7 @@ const Cuti = () => {
     fetchUserData();
   }, []);
 
-  console.log(formData)
+  console.log(formData);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -4563,10 +4563,14 @@ const Cuti = () => {
         currentTotalCuti = userDoc.data().totalCuti || 12;
       }
 
-      if (userDoc.data().totalCuti === 0) {
-        showToast.error("Pengajuan cuti ditolak karena total cuti Anda saat ini tidak tersedia")
-        setIsLoading(false); 
-        return;
+      if (userDoc.exists()) {
+        if (userDoc.data().totalCuti == 0) {
+          showToast.error(
+            "Pengajuan cuti ditolak karena total cuti Anda saat ini tidak tersedia"
+          );
+          setIsLoading(false);
+          return;
+        }
       }
 
       // const newTotalCuti = Math.max(currentTotalCuti - cutiAmount, 0);
@@ -4630,7 +4634,6 @@ const Cuti = () => {
       setIsLoading(false);
     }
   };
-
 
   return (
     <div className="bg-sky-200 items-center justify-center flex min-h-screen ">
@@ -4697,7 +4700,11 @@ const Cuti = () => {
                   className="mt-1 p-2 block w-full border rounded-md"
                   min={today}
                 /> */}
-                <CalendarComponent setFormData={setFormData} name={'startDate'} formData={formData}/>
+                <CalendarComponent
+                  setFormData={setFormData}
+                  name={"startDate"}
+                  formData={formData}
+                />
                 {errors.startDate && (
                   <p className="text-red-500 text-sm">{errors.startDate}</p>
                 )}
@@ -4817,14 +4824,22 @@ const Cuti = () => {
                   onChange={handleInputChange}
                   className="mt-1 p-2 block w-full border rounded-md"
                 /> */}
-                 <CalendarComponent setFormData={setFormData} name={'startDate'} formData={formData}/>
+                <CalendarComponent
+                  setFormData={setFormData}
+                  name={"startDate"}
+                  formData={formData}
+                />
                 {errors.startDate && (
                   <p className="text-red-500 text-sm">{errors.startDate}</p>
                 )}
                 <label className="block text-sm font-medium text-gray-700">
                   End Date
                 </label>
-                <CalendarComponent setFormData={setFormData} name={'endDate'} formData={formData}/>
+                <CalendarComponent
+                  setFormData={setFormData}
+                  name={"endDate"}
+                  formData={formData}
+                />
                 {errors.endDate && (
                   <p className="text-red-500 text-sm">{errors.endDate}</p>
                 )}
