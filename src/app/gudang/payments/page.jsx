@@ -144,7 +144,6 @@
 //     }
 //   };
 
-
 //  const handleAccCuti = async () => {
 //     const {
 //       username,
@@ -160,13 +159,13 @@
 //       amount,
 //       salaryCut, // Menambahkan salaryCut ke dalam state
 //     } = formData;
-  
+
 //     try {
 //       setIsLoading(true);
-  
+
 //       // Kurangi salary berdasarkan salary cut
 //       const newSalary = salary - parseFloat(salaryCut); // Pastikan salaryCut diubah ke tipe numerik yang sesuai
-  
+
 //       // Update document in Firestore
 //       const docRef = firestoreDoc(db, "usersCuti", email); // Sesuaikan dengan email user yang login
 //       await firestoreUpdateDoc(docRef, {
@@ -183,7 +182,7 @@
 //         amount,
 //         timeStamp: new Date(), // Example: Timestamp
 //       });
-  
+
 //       // Add a new document to slipGaji collection
 //       await addDoc(collection(db, "gajiKeseluruhan"), {
 //         username,
@@ -200,7 +199,7 @@
 //         golongan,
 //         amount,
 //       });
-  
+
 //       router.push("/"); // Redirect after successful update
 //     } catch (error) {
 //       console.error("Error updating document:", error);
@@ -209,7 +208,7 @@
 //       setIsLoading(false);
 //     }
 //   };
-  
+
 //   const handleInputChange = (e) => {
 //     const { id, value } = e.target;
 //     setFormData({
@@ -223,7 +222,7 @@
 //       <NavbarGudang />
 //       <div className="max-w-xl mx-auto p-6 bg-white md:border rounded-md md:shadow-md mt-36">
 //         <h2 className="text-2xl font-semibold mb-6">Data Diri Karyawan</h2>
-        
+
 //         <div className="mb-4">
 //           <select
 //             value={selectedUserId}
@@ -287,11 +286,6 @@
 // };
 
 // export default PaymentGajiKeseluruhan;
-
-
-
-
-
 
 // "use client"; // Pastikan ini ditulis dengan benar
 
@@ -582,7 +576,7 @@
 //         >
 //           Total Gaji Keseluruhan
 //         </button>
-        
+
 //         {totalGaji > 0 && (
 //           <p className="mt-4 text-lg font-semibold">
 //             Total Gaji Keseluruhan: {totalGaji}
@@ -595,11 +589,6 @@
 
 // export default PaymentGajiKeseluruhan;
 
-
-
-
-
-
 "use client"; // Pastikan ini ditulis dengan benar
 
 import React, { useState, useEffect } from "react";
@@ -609,36 +598,75 @@ import {
   getDocs,
   query,
   orderBy,
+  doc,
+  getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import Navbar from "@/components/Navbar";
 import NavbarGudang from "@/components/NavbarGudang";
+import DataTable from "@/components/DataTable";
+import { useRouter } from "next/navigation";
+import LeaveRequestModal from "@/components/ModalDetail";
+import { showToast } from "@/components/Toaster";
 
 const Payment = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
+
+  const fetchAllData = async () => {
+    try {
+      setIsLoading(true);
+
+      // Fetch all user documents from Firestore
+      const usersCollection = collection(db, "userPengajuanCuti");
+      const q = query(usersCollection, orderBy("timeStamp", "desc"));
+      const querySnapshot = await getDocs(q);
+
+      const allData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setData(allData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAllData = async () => {
-      try {
-        setIsLoading(true);
-
-        // Fetch all user documents from Firestore
-        const usersCollection = collection(db, "userPengajuanCuti");
-        const q = query(usersCollection, orderBy("timeStamp", "desc"));
-        const querySnapshot = await getDocs(q);
-
-        const allData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setData(allData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchAllData();
   }, []);
+
+  const handleRowClick = (row) => {
+    setSelectedData(row);
+    setIsOpen(true);
+  };
+
+  const handleApproveSelected = async (data, salary) => {
+    setLoadingUpdate(true);
+    try {
+      const docRef = doc(db, "userPengajuanCuti", data.id);
+
+      await updateDoc(docRef, {
+        // diterimaAcc: "Approve",
+        salary: salary,
+      });
+      setLoadingUpdate(false);
+      showToast.success(`Salary ${data.fullname} berhasil di update`);
+      fetchAllData()
+      setIsOpen(false);
+    } catch (error) {
+      setLoadingUpdate(false);
+      showToast.error("Salary gagal di update");
+      console.error("Error updating documents:", error);
+    }
+  };
 
   return (
     <div>
@@ -648,44 +676,23 @@ const Payment = () => {
         {isLoading ? (
           <p>Loading...</p>
         ) : (
-          <table className="min-w-full bg-white border">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border-b">Username</th>
-                <th className="py-2 px-4 border-b">Fullname</th>
-                <th className="py-2 px-4 border-b">Email</th>
-                <th className="py-2 px-4 border-b">Bank</th>
-                <th className="py-2 px-4 border-b">Salary Cut</th>
-                <th className="py-2 px-4 border-b">Account Number</th>
-                <th className="py-2 px-4 border-b">Tanggal Hari ini</th>
-                <th className="py-2 px-4 border-b">Tanggal Pengajuan Cuti</th>
-                <th className="py-2 px-4 border-b">Tanggal Akhir Cuti</th>
-                <th className="py-2 px-4 border-b">Amount</th>
-                <th className="py-2 px-4 border-b">Reason</th>
-                <th className="py-2 px-4 border-b">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item, index) => (
-                <tr key={index}>
-                  <td className="py-2 px-4 border-b">{item.username}</td>
-                  <td className="py-2 px-4 border-b">{item.fullname}</td>
-                  <td className="py-2 px-4 border-b">{item.email}</td>
-                  <td className="py-2 px-4 border-b">{item.bank}</td>
-                  <td className="py-2 px-4 border-b">{item.salary}</td>
-                  <td className="py-2 px-4 border-b">{item.accountNumber}</td>
-                  <td className="py-2 px-4 border-b">{item.timeStamp ? new Date(item.timeStamp.seconds * 1000).toLocaleDateString() : ""}</td>
-                  <td className="py-2 px-4 border-b">{item.startDate}</td>
-                  <td className="py-2 px-4 border-b">{item.endDate}</td>
-                  <td className="py-2 px-4 border-b">{item.amount}</td>
-                  <td className="py-2 px-4 border-b">{item.reason}</td>
-                  <td className="py-2 px-4 border-b">{item.diterimaAcc || "Pending"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <DataTable
+            data={data}
+            title="Daftar Pengajuan Cuti"
+            itemsPerPage={10}
+            searchPlaceholder="Cari karyawan..."
+            searchFields={["fullname", "email", "reason"]}
+            onRowClick={handleRowClick}
+          />
         )}
       </div>
+      <LeaveRequestModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        data={selectedData}
+        onSubmit={handleApproveSelected}
+        loading={loadingUpdate}
+      />
     </div>
   );
 };

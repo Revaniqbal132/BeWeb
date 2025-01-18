@@ -122,3 +122,8 @@ h3 {
     @apply max-h-[80vh];
   }
 }
+@layer base {
+  :root {
+    --radius: 0.5rem
+  }
+}

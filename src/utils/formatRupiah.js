@@ -6,12 +6,8 @@
 //   };
   
 
-export const formatRupiah = (amount) => {
-    return "Rp" + parseInt(amount, 10).toLocaleString("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).replace('IDR', '').trim();
-  };
+export function formatCurrency(value) {
+  if (!value) return '0'
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+}
   

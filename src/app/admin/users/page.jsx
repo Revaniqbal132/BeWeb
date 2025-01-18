@@ -398,9 +398,6 @@
 
 // export default User;
 
-
-
-
 // "use client"; // Pastikan ini ditulis dengan benar
 
 // import React, { useState, useEffect } from "react";
@@ -884,7 +881,6 @@
 
 // export default Payment;
 
-
 //tgl 14 oktober 2024
 // "use client";
 
@@ -1097,7 +1093,6 @@
 
 // export default Payment;
 
-
 //update tgl 20 desember 2024
 "use client";
 
@@ -1113,11 +1108,16 @@ import {
   doc,
 } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
+import EmployeeCard from "@/components/EmployeeCard";
+import SearchBar from "@/components/SearchBar";
+import { showToast } from "@/components/Toaster";
 
 const Payment = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredData, setFilteredData] = useState(data);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -1148,30 +1148,15 @@ const Payment = () => {
         : [...prevSelectedIds, id]
     );
   };
-
   const handleApproveSelected = async () => {
     try {
       const emailToSalaryMap = {};
       for (const id of selectedIds) {
         const docRef = doc(db, "userPengajuanCuti", id);
-        const docSnap = await getDoc(docRef);
-        const docData = docSnap.data();
-        const userEmail = docData.email;
-        const currentAmount = docData.amount;
-        const currentSalary = docData.salary || 40000;
-
-        if (!emailToSalaryMap[userEmail]) {
-          emailToSalaryMap[userEmail] = 0;
-        }
-
-        if (currentAmount > 0) {
-          emailToSalaryMap[userEmail] += currentAmount * currentSalary;
-        }
 
         await updateDoc(docRef, {
           // diterimaAcc: "Approve",
           status: "Approve",
-          salary: emailToSalaryMap[userEmail],
         });
       }
 
@@ -1189,7 +1174,7 @@ const Payment = () => {
           return item;
         })
       );
-
+      showToast.success('Data berhasil di approve')
       setSelectedIds([]);
     } catch (error) {
       console.error("Error updating documents:", error);
@@ -1209,9 +1194,8 @@ const Payment = () => {
       setData((prevData) =>
         prevData.map((item) =>
           selectedIds.includes(item.id)
-            // ? { ...item, diterimaAcc: "Decline" }
-            ? { ...item, status: "Decline" }
-
+            ? // ? { ...item, diterimaAcc: "Decline" }
+              { ...item, status: "Decline" }
             : item
         )
       );
@@ -1231,57 +1215,48 @@ const Payment = () => {
           <p>Loading...</p>
         ) : (
           <>
-            <div className="mb-4 flex space-x-2">
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                onClick={handleApproveSelected}
-                disabled={selectedIds.length === 0}
-              >
-                Approve Selected
-              </button>
-              <button
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                onClick={handleDeclineSelected}
-                disabled={selectedIds.length === 0}
-              >
-                Decline Selected
-              </button>
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <SearchBar
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  setData={setFilteredData}
+                  data={data}
+                />
+              </div>
+              <div>
+                <button
+                  className="bg-green-500 text-white mr-2 px-4 py-2 rounded hover:bg-green-600"
+                  onClick={handleApproveSelected}
+                  disabled={selectedIds.length === 0}
+                >
+                  Approve Selected
+                </button>
+                <button
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  onClick={handleDeclineSelected}
+                  disabled={selectedIds.length === 0}
+                >
+                  Decline Selected
+                </button>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {data.map((item) => (
-                <div
-                  key={item.id}
-                  className={`bg-white shadow-md rounded-lg p-4 border ${
-                    selectedIds.includes(item.id) ? "border-green-500" : "border-gray-200"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.includes(item.id)}
-                    onChange={() => handleCheckboxChange(item.id)}
-                    className="mb-2"
-                  />
-                  <h3 className="text-lg font-bold">{item.username}</h3>
-                  <p className="text-gray-600">Fullname: {item.fullname}</p>
-                  <p className="text-gray-600">Email: {item.email}</p>
-                  <p className="text-gray-600">Bank: {item.bank}</p>
-                  <p className="text-gray-600">Total Cuti: {item.totalCuti}</p>
-                  <p className="text-gray-600">Cuti Hamil: {item.amountHamil}</p>
-                  <p className="text-gray-600">Cuti Lahiran: {item.amountLahiran}</p>
-                  <p className="text-gray-600">Account: {item.accountNumber}</p>
-                  <p className="text-gray-600">Salary: {item.salary}</p>
-                                       <td className="py-2 px-4 border-b">{item.startDate}</td>
-                   <td className="py-2 px-4 border-b">{item.endDate}</td>
-                  {/* <p className="text-gray-600">Status: {item.diterimaAcc || "Pending"}</p> */}
-                  <p className="text-gray-600">Status: {item.status || "Pending"}</p>
-                  <p className="text-gray-600">
-                    Submitted:{" "}
-                    {item.timeStamp
-                      ? new Date(item.timeStamp.seconds * 1000).toLocaleDateString()
-                      : "N/A"}
-                  </p>
-                </div>
-              ))}
+              {filteredData.length === 0
+                ? data.map((item) => (
+                    <EmployeeCard
+                      selectedIds={selectedIds}
+                      employee={item}
+                      handleCheckboxChange={handleCheckboxChange}
+                    />
+                  ))
+                : filteredData.map((item) => (
+                    <EmployeeCard
+                      selectedIds={selectedIds}
+                      employee={item}
+                      handleCheckboxChange={handleCheckboxChange}
+                    />
+                  ))}
             </div>
           </>
         )}
@@ -1291,13 +1266,3 @@ const Payment = () => {
 };
 
 export default Payment;
-
-
-
-
-
-
-
-
-
-

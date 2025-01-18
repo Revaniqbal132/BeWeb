@@ -311,7 +311,6 @@
 
 // export default Cuti;
 
-
 //CODE FIX BANGET 2
 // "use client";
 // import { useState, useEffect } from "react";
@@ -663,7 +662,6 @@
 // };
 
 // export default Cuti;
-
 
 //CODE FIX BANGET 5
 // "use client";
@@ -1018,8 +1016,6 @@
 
 // export default Cuti;
 
-
-
 //CODE FIXXXXXXXXXXXXX
 // "use client";
 // import { useState, useEffect } from "react";
@@ -1227,8 +1223,6 @@
 //   //     setIsLoading(false);
 //   //   }
 //   // };
-  
-
 
 //   const handleCuti = async () => {
 //     try {
@@ -1261,13 +1255,13 @@
 //         newErrors.endDate = "End date should be after start date";
 //       }
 //       setErrors(newErrors);
-  
+
 //       if (Object.keys(newErrors).length > 0 || !isFormVisible) {
 //         return;
 //       }
-  
+
 //       setIsLoading(true);
-  
+
 //       // Get current totalCuti for the user
 //       const userDocRef = doc(db, "usersCuti", formData.email);
 //       const userDoc = await getDoc(userDocRef);
@@ -1275,9 +1269,9 @@
 //       if (userDoc.exists()) {
 //         currentTotalCuti = userDoc.data().totalCuti;
 //       }
-  
+
 //       const newTotalCuti = currentTotalCuti - parseInt(formData.amount);
-  
+
 //       // Data for usersCuti collection
 //       const userData = {
 //         username: formData.username,
@@ -1296,7 +1290,7 @@
 //         balance: 0,
 //         totalCuti: newTotalCuti,
 //       };
-  
+
 //       // Data for userPengajuanCuti collection
 //       const cutiData = {
 //         username: formData.username,
@@ -1313,16 +1307,16 @@
 //         status: "pending", // You might want to track status
 //         totalCuti: newTotalCuti,
 //       };
-  
+
 //       // Add to usersCuti collection
 //       await setDoc(userDocRef, userData);
-  
+
 //       // Add to userPengajuanCuti collection
 //       const cutiDocRef = doc(db, "userPengajuanCuti", formData.email + "_" + Date.now());
 //       await setDoc(cutiDocRef, cutiData);
-  
+
 //       setToastMessage("Cuti berhasil diajukan.");
-  
+
 //       setFormData({
 //         username: "",
 //         fullname: "",
@@ -1338,9 +1332,9 @@
 //         endDate: "",
 //         totalCuti: 12,
 //       });
-  
+
 //       setCutiCount(cutiCount + 1);
-  
+
 //       if (cutiCount + 1 >= 3) {
 //         setIsFormVisible(false);
 //       }
@@ -1562,7 +1556,6 @@
 // };
 
 // export default Cuti;
-
 
 //update tgl 2 desember 2024
 // "use client";
@@ -2111,7 +2104,7 @@
 //         currentTotalCuti = userDoc.data().totalCuti || 12;
 //       }
 
-//       // const cutiAmount = 
+//       // const cutiAmount =
 //       //   formData.jenisCuti === "cuti hamil" ? parseInt(formData.amountHamil || 0) :
 //       //   formData.jenisCuti === "cuti lahiran" ? parseInt(formData.amountLahiran || 0) :
 //       //   parseInt(formData.amount || 0);
@@ -2654,7 +2647,7 @@
 //   )}
 
 //               </div>
-              
+
 //             )}
 //             <div className="mt-6">
 //               <button
@@ -2682,10 +2675,6 @@
 // };
 
 // export default Cuti;
-
-
-
-
 
 // "use client";
 // import { useState, useEffect } from "react";
@@ -3199,7 +3188,7 @@
 //         currentTotalCuti = userDoc.data().totalCuti || 12;
 //       }
 
-//       // const cutiAmount = 
+//       // const cutiAmount =
 //       //   formData.jenisCuti === "cuti hamil" ? parseInt(formData.amountHamil || 0) :
 //       //   formData.jenisCuti === "cuti lahiran" ? parseInt(formData.amountLahiran || 0) :
 //       //   parseInt(formData.amount || 0);
@@ -3742,7 +3731,7 @@
 //   )}
 
 //               </div>
-              
+
 //             )}
 //             <div className="mt-6">
 //               <button
@@ -3893,7 +3882,7 @@
 //         currentTotalCuti = userDoc.data().totalCuti || 12;
 //       }
 
-//       // const cutiAmount = 
+//       // const cutiAmount =
 //       //   formData.jenisCuti === "cuti hamil" ? parseInt(formData.amountHamil || 0) :
 //       //   formData.jenisCuti === "cuti lahiran" ? parseInt(formData.amountLahiran || 0) :
 //       //   parseInt(formData.amount || 0);
@@ -4436,7 +4425,7 @@
 //   )}
 
 //               </div>
-              
+
 //             )}
 //             <div className="mt-6">
 //               <button
@@ -4465,9 +4454,6 @@
 
 // export default Cuti;
 
-
-
-
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -4483,6 +4469,8 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import Navbar from "@/components/Navbar";
+import CalendarComponent from "@/components/CalendarComponent";
+import { showToast } from "@/components/Toaster";
 
 const Cuti = () => {
   const [formData, setFormData] = useState({
@@ -4536,6 +4524,8 @@ const Cuti = () => {
     fetchUserData();
   }, []);
 
+  console.log(formData)
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -4573,8 +4563,17 @@ const Cuti = () => {
         currentTotalCuti = userDoc.data().totalCuti || 12;
       }
 
+      if (userDoc.data().totalCuti === 0) {
+        showToast.error("Pengajuan cuti ditolak karena total cuti Anda saat ini tidak tersedia")
+        setIsLoading(false); 
+        return;
+      }
+
       // const newTotalCuti = Math.max(currentTotalCuti - cutiAmount, 0);
-      const newTotalCuti = Math.max(currentTotalCuti - parseInt(formData.amount), 0);
+      const newTotalCuti = Math.max(
+        currentTotalCuti - parseInt(formData.amount),
+        0
+      );
 
       const userData = {
         ...formData,
@@ -4603,7 +4602,7 @@ const Cuti = () => {
       );
       await setDoc(cutiDocRef, cutiData);
 
-      setToastMessage("Cuti berhasil diajukan.");
+      showToast.success("Cuti berhasil diajukan.");
       setFormData({
         username: "",
         fullname: "",
@@ -4626,24 +4625,25 @@ const Cuti = () => {
       if (cutiCount + 1 >= 3) setIsFormVisible(false);
     } catch (error) {
       console.error("Error submitting cuti:", error);
-      setToastMessage("Error submitting cuti. Please try again.");
+      showToast.error("Error submitting cuti. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
+
   return (
-    <div className="bg-sky-200 min-h-screen flex flex-col">
+    <div className="bg-sky-200 items-center justify-center flex min-h-screen ">
       <Navbar />
       {isFormVisible && (
-        <div className="max-w-xl mx-auto p-6 bg-white md:border rounded-md md:shadow-md mt-36">
+        <div className="p-6 bg-white md:border rounded-md md:shadow-md mt-36 max-xl:w-[90%] lg:w-[70%] max-[768px]:w-[100%]">
           {/* <h2 className="text-2xl font-semibold mb-6">
             Data Diri & Pengajuan Cuti
           </h2> */}
           <form>
             {/* Existing Inputs */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+            <div className="mb-4 ">
+              <label className=" text-sm font-medium text-gray-700">
                 Jenis Cuti
               </label>
               <select
@@ -4664,54 +4664,50 @@ const Cuti = () => {
             {/* Conditional Inputs for Amount */}
             {formData.jenisCuti === "cuti hamil" && (
               <div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">
-    Reason
-  </label>
-  <textarea
-    name="reason"
-    value={formData.reason}
-    onChange={handleInputChange}
-    className="mt-1 p-2 block w-full border rounded-md"
-  />
-  {errors.reason && (
-    <p className="text-red-500 text-sm">{errors.reason}</p>
-  )}
-  <label className="block text-sm font-medium text-gray-700">
-      Jumlah Hari Cuti
-    </label>
-    <input
-      type="text"
-      name="amount"
-      value={formData.amount}
-      onChange={handleInputChange}
-      className="mt-1 p-2 block w-full border rounded-md"
-    />
-    <label className="block text-sm font-medium text-gray-700">
-    Start Date
-  </label>
-  <input
-    type="date"
-    name="startDate"
-    value={formData.startDate}
-    onChange={handleInputChange}
-    className="mt-1 p-2 block w-full border rounded-md"
-  />
-  {errors.startDate && (
-    <p className="text-red-500 text-sm">{errors.startDate}</p>
-  )}
-  <label className="block text-sm font-medium text-gray-700">
-    End Date
-  </label>
-  <input
-    type="date"
-    name="endDate"
-    value={formData.endDate}
-    onChange={handleInputChange}
-    className="mt-1 p-2 block w-full border rounded-md"
-  />
-  {errors.endDate && (
-    <p className="text-red-500 text-sm">{errors.endDate}</p>
-  )}
+                <label className="block text-sm font-medium text-gray-700">
+                  Reason
+                </label>
+                <textarea
+                  name="reason"
+                  value={formData.reason}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 block w-full border rounded-md"
+                />
+                {errors.reason && (
+                  <p className="text-red-500 text-sm">{errors.reason}</p>
+                )}
+                <label className="block text-sm font-medium text-gray-700">
+                  Jumlah Hari Cuti
+                </label>
+                <input
+                  type="text"
+                  name="amount"
+                  value={formData.amount}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 block w-full border rounded-md"
+                />
+                <label className="block text-sm font-medium text-gray-700">
+                  Start Date
+                </label>
+                {/* <input
+                  type="date"
+                  name="startDate"
+                  value={formData.startDate}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 block w-full border rounded-md"
+                  min={today}
+                /> */}
+                <CalendarComponent setFormData={setFormData} name={'startDate'} formData={formData}/>
+                {errors.startDate && (
+                  <p className="text-red-500 text-sm">{errors.startDate}</p>
+                )}
+                <label className="block text-sm font-medium text-gray-700">
+                  End Date
+                </label>
+                <CalendarComponent />
+                {errors.endDate && (
+                  <p className="text-red-500 text-sm">{errors.endDate}</p>
+                )}
                 <label className="block text-sm font-medium text-gray-700">
                   Jumlah Hari Cuti Hamil
                 </label>
@@ -4726,54 +4722,54 @@ const Cuti = () => {
             )}
             {formData.jenisCuti === "cuti lahiran" && (
               <div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">
-    Reason
-  </label>
-  <textarea
-    name="reason"
-    value={formData.reason}
-    onChange={handleInputChange}
-    className="mt-1 p-2 block w-full border rounded-md"
-  />
-  {errors.reason && (
-    <p className="text-red-500 text-sm">{errors.reason}</p>
-  )}
-  <label className="block text-sm font-medium text-gray-700">
-      Jumlah Hari Cuti
-    </label>
-    <input
-      type="text"
-      name="amount"
-      value={formData.amount}
-      onChange={handleInputChange}
-      className="mt-1 p-2 block w-full border rounded-md"
-    />
-    <label className="block text-sm font-medium text-gray-700">
-    Start Date
-  </label>
-  <input
-    type="date"
-    name="startDate"
-    value={formData.startDate}
-    onChange={handleInputChange}
-    className="mt-1 p-2 block w-full border rounded-md"
-  />
-  {errors.startDate && (
-    <p className="text-red-500 text-sm">{errors.startDate}</p>
-  )}
-  <label className="block text-sm font-medium text-gray-700">
-    End Date
-  </label>
-  <input
-    type="date"
-    name="endDate"
-    value={formData.endDate}
-    onChange={handleInputChange}
-    className="mt-1 p-2 block w-full border rounded-md"
-  />
-  {errors.endDate && (
-    <p className="text-red-500 text-sm">{errors.endDate}</p>
-  )}
+                <label className="block text-sm font-medium text-gray-700">
+                  Reason
+                </label>
+                <textarea
+                  name="reason"
+                  value={formData.reason}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 block w-full border rounded-md"
+                />
+                {errors.reason && (
+                  <p className="text-red-500 text-sm">{errors.reason}</p>
+                )}
+                <label className="block text-sm font-medium text-gray-700">
+                  Jumlah Hari Cuti
+                </label>
+                <input
+                  type="text"
+                  name="amount"
+                  value={formData.amount}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 block w-full border rounded-md"
+                />
+                <label className="block text-sm font-medium text-gray-700">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  name="startDate"
+                  value={formData.startDate}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 block w-full border rounded-md"
+                />
+                {errors.startDate && (
+                  <p className="text-red-500 text-sm">{errors.startDate}</p>
+                )}
+                <label className="block text-sm font-medium text-gray-700">
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  name="endDate"
+                  value={formData.endDate}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 block w-full border rounded-md"
+                />
+                {errors.endDate && (
+                  <p className="text-red-500 text-sm">{errors.endDate}</p>
+                )}
                 <label className="block text-sm font-medium text-gray-700">
                   Jumlah Hari Cuti Lahiran
                 </label>
@@ -4788,58 +4784,51 @@ const Cuti = () => {
             )}
             {formData.jenisCuti === "cuti tahunan" && (
               <div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">
-    Reason
-  </label>
-  <textarea
-    name="reason"
-    value={formData.reason}
-    onChange={handleInputChange}
-    className="mt-1 p-2 block w-full border rounded-md"
-  />
-  {errors.reason && (
-    <p className="text-red-500 text-sm">{errors.reason}</p>
-  )}
+                <label className="block text-sm font-medium text-gray-700">
+                  Reason
+                </label>
+                <textarea
+                  name="reason"
+                  value={formData.reason}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 block w-full border rounded-md"
+                />
+                {errors.reason && (
+                  <p className="text-red-500 text-sm">{errors.reason}</p>
+                )}
 
-  <label className="block text-sm font-medium text-gray-700">
-      Jumlah Hari Cuti
-    </label>
-    <input
-      type="text"
-      name="amount"
-      value={formData.amount}
-      onChange={handleInputChange}
-      className="mt-1 p-2 block w-full border rounded-md"
-    />
-    <label className="block text-sm font-medium text-gray-700">
-    Start Date
-  </label>
-  <input
-    type="date"
-    name="startDate"
-    value={formData.startDate}
-    onChange={handleInputChange}
-    className="mt-1 p-2 block w-full border rounded-md"
-  />
-  {errors.startDate && (
-    <p className="text-red-500 text-sm">{errors.startDate}</p>
-  )}
-  <label className="block text-sm font-medium text-gray-700">
-    End Date
-  </label>
-  <input
-    type="date"
-    name="endDate"
-    value={formData.endDate}
-    onChange={handleInputChange}
-    className="mt-1 p-2 block w-full border rounded-md"
-  />
-  {errors.endDate && (
-    <p className="text-red-500 text-sm">{errors.endDate}</p>
-  )}
-
+                <label className="block text-sm font-medium text-gray-700">
+                  Jumlah Hari Cuti
+                </label>
+                <input
+                  type="text"
+                  name="amount"
+                  value={formData.amount}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 block w-full border rounded-md"
+                />
+                <label className="block text-sm font-medium text-gray-700">
+                  Start Date
+                </label>
+                {/* <input
+                  type="date"
+                  name="startDate"
+                  value={formData.startDate}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 block w-full border rounded-md"
+                /> */}
+                 <CalendarComponent setFormData={setFormData} name={'startDate'} formData={formData}/>
+                {errors.startDate && (
+                  <p className="text-red-500 text-sm">{errors.startDate}</p>
+                )}
+                <label className="block text-sm font-medium text-gray-700">
+                  End Date
+                </label>
+                <CalendarComponent setFormData={setFormData} name={'endDate'} formData={formData}/>
+                {errors.endDate && (
+                  <p className="text-red-500 text-sm">{errors.endDate}</p>
+                )}
               </div>
-              
             )}
             <div className="mt-6">
               <button
