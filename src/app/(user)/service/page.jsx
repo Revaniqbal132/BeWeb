@@ -359,6 +359,8 @@ const Service = () => {
     return () => unsub();
   }, []);
 
+  console.log(events)
+
   const [visibleData, setVisibleData] = useState(1); // Display one data initially
 
   // Function to handle scrolling and load more data
@@ -405,7 +407,7 @@ const Service = () => {
           <p className="text-lg text-gray-600">Best service that we offer</p>
         </div>
         <div className="w-full max-w-4xl mx-auto">
-          <CalendarComponent events={events} onDateClick={handleDateClick} />
+          <CalendarComponent handleDateChange={handleDateClick} />
         </div>
       </div>
 
@@ -436,8 +438,8 @@ const Service = () => {
                     </span>
                   </p>
                   <div className="grid grid-cols-2 gap-4 text-lg text-gray-600">
-                    <p><strong>Start Date:</strong> {data.startDate}</p>
-                    <p><strong>End Date:</strong> {data.endDate}</p>
+                    <p><strong>Start Date:</strong> {data.startDate ? new Date(data.startDate.seconds * 1000).toLocaleDateString() : ""}</p>
+                    <p><strong>End Date:</strong> {data.endDate ? new Date(data.endDate.seconds * 1000).toLocaleDateString() : ""}</p>
                   </div>
                 </div>
               </div>

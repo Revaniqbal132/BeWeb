@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from "@/components/ui/popover";
 
-const DatePickerDemo = ({formData,setFormData,name}) => {
+const DatePickerDemo = ({ formData, setFormData, name ,handleDateChange}) => {
   const [date, setDate] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -16,10 +16,20 @@ const DatePickerDemo = ({formData,setFormData,name}) => {
   today.setHours(0, 0, 0, 0);
 
   const formatDate = (date) => {
-    if (!date) return '';
+    if (!date) return "";
     const months = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
     ];
     return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
   };
@@ -31,7 +41,6 @@ const DatePickerDemo = ({formData,setFormData,name}) => {
     return currentDate < today;
   };
 
-
   return (
     <div className="w-full max-w-md">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -41,14 +50,14 @@ const DatePickerDemo = ({formData,setFormData,name}) => {
             className="w-full min-h-[40px] sm:min-h-[44px] text-left font-normal relative flex items-center justify-between hover:bg-gray-100 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <div className="flex items-center">
-              <svg 
-                className="mr-2 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" 
-                xmlns="http://www.w3.org/2000/svg" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
+              <svg
+                className="mr-2 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
                 strokeLinejoin="round"
               >
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -57,37 +66,38 @@ const DatePickerDemo = ({formData,setFormData,name}) => {
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
               <span className="truncate">
-                {formData[name] ? formatDate(formData[name]) : "Pilih tanggal"}
+                {formData && formData[name]
+                  ? formatDate(formData[name])
+                  : "Pilih tanggal"}
               </span>
             </div>
-            <svg 
-              className={`h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-              xmlns="http://www.w3.org/2000/svg" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
+            <svg
+              className={`h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 ${
+                isOpen ? "rotate-180" : ""
+              }`}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
               strokeLinejoin="round"
             >
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </Button>
         </PopoverTrigger>
-        <PopoverContent 
-          className="w-auto p-0 sm:min-w-[320px]"
-          align="start"
-        >
+        <PopoverContent className="w-auto p-0 sm:min-w-[320px]" align="start">
           <Calendar
             mode="single"
-            selected={formData[name]}
+            // selected={formData[name]}
             onSelect={(newDate) => {
-              setFormData({ ...formData, [name]: newDate });
+              setFormData? setFormData({ ...formData, [name]: newDate }) : handleDateChange(newDate)
               setIsOpen(false);
             }}
             disabled={disabledDays}
-            defaultMonth={today} 
-            fromDate={today} 
+            defaultMonth={today}
+            fromDate={today}
             initialFocus
             className="rounded-md border shadow-lg"
           />
