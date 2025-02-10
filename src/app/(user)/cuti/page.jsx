@@ -4471,6 +4471,7 @@ import { db } from "@/firebase/firebase";
 import Navbar from "@/components/Navbar";
 import CalendarComponent from "@/components/CalendarComponent";
 import { showToast } from "@/components/Toaster";
+import moment from "moment";
 
 const Cuti = () => {
   const [formData, setFormData] = useState({
@@ -4523,8 +4524,6 @@ const Cuti = () => {
     };
     fetchUserData();
   }, []);
-
-  console.log(formData);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -4581,6 +4580,8 @@ const Cuti = () => {
 
       const userData = {
         ...formData,
+        startDate: moment(formData.startDate).format("YYYY-MM-DD"),
+        endDate: moment(formData.endDate).format("YYYY-MM-DD"),
         role: "user",
         status: "online",
         withDrawalStatus: "nothing",
@@ -4597,6 +4598,8 @@ const Cuti = () => {
 
       // Add to usersCuti collection
       await setDoc(userDocRef, userData);
+
+      console.log(cutiData)
 
       // Add to userPengajuanCuti collection
       const cutiDocRef = doc(
@@ -4634,6 +4637,8 @@ const Cuti = () => {
       setIsLoading(false);
     }
   };
+
+  console.log(formData)
 
   return (
     <div className="bg-sky-200 items-center justify-center flex min-h-screen ">
@@ -4711,7 +4716,11 @@ const Cuti = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   End Date
                 </label>
-                <CalendarComponent />
+                <CalendarComponent
+                  setFormData={setFormData}
+                  name={"endDate"}
+                  formData={formData}
+                />
                 {errors.endDate && (
                   <p className="text-red-500 text-sm">{errors.endDate}</p>
                 )}
@@ -4754,12 +4763,10 @@ const Cuti = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   Start Date
                 </label>
-                <input
-                  type="date"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleInputChange}
-                  className="mt-1 p-2 block w-full border rounded-md"
+                <CalendarComponent
+                  setFormData={setFormData}
+                  name={"startDate"}
+                  formData={formData}
                 />
                 {errors.startDate && (
                   <p className="text-red-500 text-sm">{errors.startDate}</p>
@@ -4767,12 +4774,10 @@ const Cuti = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   End Date
                 </label>
-                <input
-                  type="date"
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleInputChange}
-                  className="mt-1 p-2 block w-full border rounded-md"
+                <CalendarComponent
+                  setFormData={setFormData}
+                  name={"endDate"}
+                  formData={formData}
                 />
                 {errors.endDate && (
                   <p className="text-red-500 text-sm">{errors.endDate}</p>

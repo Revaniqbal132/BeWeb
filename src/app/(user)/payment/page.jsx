@@ -279,7 +279,6 @@ const Payment = () => {
     }
   };
 
-  console.log(data);
   return (
     <div className="bg-sky-200 min-h-screen flex flex-col">
       <Navbar />

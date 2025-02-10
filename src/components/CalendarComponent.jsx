@@ -6,6 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import moment from "moment";
 
 const DatePickerDemo = ({ formData, setFormData, name ,handleDateChange}) => {
   const [date, setDate] = useState(null);
@@ -89,6 +90,7 @@ const DatePickerDemo = ({ formData, setFormData, name ,handleDateChange}) => {
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0 sm:min-w-[320px]" align="start">
           <Calendar
+
             mode="single"
             // selected={formData[name]}
             onSelect={(newDate) => {
