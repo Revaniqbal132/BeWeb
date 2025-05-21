@@ -1097,7 +1097,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import NavbarAdmin from "@/components/NavbarAdmin";
 import {
   collection,
   getDocs,
@@ -1111,6 +1110,7 @@ import { db } from "@/firebase/firebase";
 import EmployeeCard from "@/components/EmployeeCard";
 import SearchBar from "@/components/SearchBar";
 import { showToast } from "@/components/Toaster";
+import NavbarAdmin from "@/components/NavbarAdmin";
 
 const Payment = () => {
   const [data, setData] = useState([]);
@@ -1119,25 +1119,26 @@ const Payment = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState(data);
 
-  useEffect(() => {
-    const fetchAllData = async () => {
-      try {
-        setIsLoading(true);
-        const usersCollection = collection(db, "userPengajuanCuti");
-        const q = query(usersCollection, orderBy("timeStamp", "desc"));
-        const querySnapshot = await getDocs(q);
-        const allData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setData(allData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchAllData = async () => {
+    try {
+      setIsLoading(true);
+      const usersCollection = collection(db, "userPengajuanCuti");
+      const q = query(usersCollection, orderBy("timeStamp", "desc"));
+      const querySnapshot = await getDocs(q);
+      const allData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setData(allData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+
+  useEffect(() => {
     fetchAllData();
   }, []);
 
@@ -1150,7 +1151,6 @@ const Payment = () => {
   };
   const handleApproveSelected = async () => {
     try {
-      const emailToSalaryMap = {};
       for (const id of selectedIds) {
         const docRef = doc(db, "userPengajuanCuti", id);
 
@@ -1160,21 +1160,8 @@ const Payment = () => {
         });
       }
 
-      setData((prevData) =>
-        prevData.map((item) => {
-          if (selectedIds.includes(item.id)) {
-            const updatedSalary = emailToSalaryMap[item.email] || item.salary;
-            return {
-              ...item,
-              // diterimaAcc: "Approve",
-              status: "Approve",
-              salary: updatedSalary,
-            };
-          }
-          return item;
-        })
-      );
-      showToast.success('Data berhasil di approve')
+      fetchAllData();
+      showToast.success("Data berhasil di approve");
       setSelectedIds([]);
     } catch (error) {
       console.error("Error updating documents:", error);
@@ -1206,7 +1193,7 @@ const Payment = () => {
     }
   };
 
-  console.log(data)
+  console.log(data);
 
   return (
     <div className="bg-sky-200 min-h-screen flex flex-col">

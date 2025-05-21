@@ -28,6 +28,14 @@ const NavbarAdmin = () => {
               Dashboard
             </Link>
           </li>
+          <li className="md:mr-3">
+            <Link
+              href={"/admin/employees"}
+              className="px-4 py-3  transition-all duration-300 hover:bg-teal-500 hover:text-white rounded"
+            >
+              Karyawan
+            </Link>
+          </li>
           {/* <li className="md:mr-3">
             <Link
               href={"/admin/payment"}
@@ -41,7 +49,7 @@ const NavbarAdmin = () => {
               href={"/admin/users"}
               className="px-4 py-3  transition-all duration-300 hover:bg-teal-500 hover:text-white rounded"
             >
-              Users
+              List Cuti
             </Link>
           </li>
           <li>

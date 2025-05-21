@@ -209,6 +209,7 @@ import { db } from "@/firebase/firebase";
 import { getAuth } from "firebase/auth";
 import Navbar from "@/components/Navbar";
 import { useEffect, useState } from "react";
+import moment from "moment";
 
 const Payment = () => {
   const [data, setData] = useState([]);
@@ -279,6 +280,8 @@ const Payment = () => {
     }
   };
 
+  console.log(data)
+
   return (
     <div className="bg-sky-200 min-h-screen flex flex-col">
       <Navbar />
@@ -315,8 +318,8 @@ const Payment = () => {
                     <p><strong>Total Cuti:</strong> {item.totalCuti}</p>
                     <p><strong>Account Number:</strong> {item.accountNumber}</p>
                     <p><strong>Tanggal Hari Ini:</strong> {item.timeStamp ? new Date(item.timeStamp.seconds * 1000).toLocaleDateString() : ""}</p>
-                    <p><strong>Tanggal Pengajuan Cuti:</strong> {item.startDate ? new Date(item.startDate.seconds * 1000).toLocaleDateString() : ""}</p>
-                    <p><strong>Tanggal Akhir Cuti:</strong>  {item.endDate ? new Date(item.endDate.seconds * 1000).toLocaleDateString() : ""}</p>
+                    <p><strong>Tanggal Pengajuan Cuti:</strong> {item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : ""}</p>
+                    <p><strong>Tanggal Akhir Cuti:</strong>  {item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : ""}</p>
                     <p><strong>Amount:</strong> {item.amount}</p>
                     <p><strong>Salary Cut:</strong> {item.salary}</p>
                     <p><strong>Reason:</strong> {item.reason}</p>
