@@ -22,6 +22,7 @@ const SignUp = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     fullName: "",
+    gender: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -56,6 +57,9 @@ const SignUp = () => {
       } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
         newErrors.email = "Email address is invalid";
       }
+      if (!formData.gender) {
+        newErrors.gender = "Gender is required";
+      }
       if (!formData.password) {
         newErrors.password = "Password is required";
       } else if (formData.password !== formData.confirmPassword) {
@@ -82,6 +86,7 @@ const SignUp = () => {
         email: formData.email,
         password: formData.password,
         status: "online",
+        gender: formData.gender,
       };
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -157,6 +162,20 @@ const SignUp = () => {
               className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
             />
             {errors.email && <p className="text-red-500">{errors.email}</p>}
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Jenis Kelamin</label>
+            <select
+              name="gender"
+              value={formData.gender || ""}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            >
+              <option value="">Pilih jenis kelamin</option>
+              <option value="Laki-laki">Laki-laki</option>
+              <option value="Perempuan">Perempuan</option>
+            </select>
+            {errors.gender && <p className="text-red-500">{errors.gender}</p>}
           </div>
           <div className="mb-4">
             <label className="block mb-1">Password</label>

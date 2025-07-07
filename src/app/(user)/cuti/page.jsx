@@ -4497,10 +4497,12 @@ const Cuti = () => {
   const [cutiCount, setCutiCount] = useState(0);
   const [isFormVisible, setIsFormVisible] = useState(true);
   const router = useRouter();
+  const [profile, setProfile] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
       const userProfile = localStorage.getItem("userProfile");
+      setProfile(JSON.parse(userProfile));
       if (userProfile) {
         const userData = JSON.parse(userProfile);
         setFormData({
@@ -4599,7 +4601,7 @@ const Cuti = () => {
       // Add to usersCuti collection
       await setDoc(userDocRef, userData);
 
-      console.log(cutiData)
+      console.log(cutiData);
 
       // Add to userPengajuanCuti collection
       const cutiDocRef = doc(
@@ -4638,7 +4640,7 @@ const Cuti = () => {
     }
   };
 
-  console.log(formData)
+  console.log(profile);
 
   return (
     <div className="bg-sky-200 items-center justify-center flex min-h-screen ">
@@ -4662,8 +4664,8 @@ const Cuti = () => {
               >
                 <option value="">Pilih Jenis Cuti</option>
                 <option value="cuti tahunan">Cuti Tahunan</option>
-                <option value="cuti hamil">Cuti Hamil</option>
-                <option value="cuti lahiran">Cuti Lahiran</option>
+                <option disabled={profile.gender == 'Laki-laki'} value="cuti hamil">Cuti Hamil</option>
+                <option disabled={profile.gender == 'Laki-laki'} value="cuti lahiran">Cuti Lahiran</option>
               </select>
               {errors.jenisCuti && (
                 <p className="text-red-500 text-sm">{errors.jenisCuti}</p>
