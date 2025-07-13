@@ -9,17 +9,18 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const { user, userProfile } = useAuth();
+  console.log(userProfile);
   const router = useRouter();
   const [userName, setUserName] = useState(""); // Inisialisasi state userName dengan nilai awal kosong
   useEffect(() => {
-    if (user && userProfile.role === "admin") {
+    if (user && userProfile?.role === "admin") {
       router.push("/admin");
-    }else if (user && userProfile.role === "gudang") {
+    } else if (user && userProfile?.role === "gudang") {
       router.push("/gudang");
-    }else if (user && userProfile.role === "user") {
+    } else if (user && userProfile?.role === "user") {
       // Jika user adalah admin, kita dapat menampilkan alert selamat datang
       // dan menampilkan nama admin dari userProfile
-      alert("Selamat datang, " + userProfile.name);
+      alert("Selamat datang, " + userProfile.name || "User");
       setUserName(userProfile.name);
     }
   }, [user, userProfile, router]);
@@ -30,13 +31,15 @@ export default function Home() {
         <Image
           src={"/assets/bealogo.png"}
           width={550}
-          height={550 }
+          height={550}
           alt={"logo"}
           className="object-cover"
           priority
         />
         <h1 className="text-center mt-48 text-2xl mb-28">
-          Siap membawa Bisnis Ecommerce Anda ke level berikutnya? Hubungi kami hari ini untuk mempelajari bagaimana Be Agency dapat membantu Anda sukses di bisnis anda.
+          Siap membawa Bisnis Ecommerce Anda ke level berikutnya? Hubungi kami
+          hari ini untuk mempelajari bagaimana Be Agency dapat membantu Anda
+          sukses di bisnis anda.
         </h1>
       </div>
       {/* <Footer /> */}

@@ -3,12 +3,26 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/firebase/firebase";
 import { signOut } from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 
 const useAuth = () => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const router = useRouter();
+
+  const fetchUserProfile = async (uid) => {
+    try {
+      const userRef = doc(db, "users", uid);
+      console.log();
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        setUserProfile(userDoc.data());
+        // localStorage.setItem("userProfile", JSON.stringify(userDoc.data()));
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -44,7 +58,7 @@ const useAuth = () => {
       });
   };
 
-  return { user, userProfile, handleLogout };
+  return { user, userProfile, handleLogout, fetchUserProfile };
 };
 
 export default useAuth;

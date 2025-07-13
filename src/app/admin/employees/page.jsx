@@ -10,20 +10,30 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { collection, deleteDoc, doc, getDocs, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import NavbarAdmin from "@/components/NavbarAdmin";
 import useAuth from "@/app/hooks/useAuth";
 import ActionMenu from "@/components/ActionMenu";
 import EmployeeModal from "@/components/ModalEmployee";
+import { EmployeeDetailModal } from "@/components/ModalDetailHR";
 
 export default function EmployeeList() {
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState('add');
+  const [modalMode, setModalMode] = useState("add");
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+  const [selectedData, setSelectedData] = useState({});
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -176,8 +186,6 @@ export default function EmployeeList() {
     );
   };
 
-
-
   const handleDelete = async (employeeId) => {
     console.log("Deleting employee with ID:", employeeId);
     if (window.confirm("Apakah Anda yakin ingin menghapus karyawan ini?")) {
@@ -187,7 +195,7 @@ export default function EmployeeList() {
           prevEmployees.filter((emp) => emp.id !== employeeId)
         );
         alert("Data berhasil dihapus.");
-        fetchEmployees()
+        fetchEmployees();
       } catch (error) {
         console.error("Gagal menghapus data:", error);
         alert("Terjadi kesalahan saat menghapus data.");
@@ -222,7 +230,7 @@ export default function EmployeeList() {
         <div className="flex flex-col sm:flex-row justify-between gap-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <button
-               onClick={openAddModal}
+              onClick={openAddModal}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
             >
               <UserPlus className="w-4 h-4" />
@@ -246,7 +254,7 @@ export default function EmployeeList() {
           </div>
 
           {/* Status Filter */}
-          <div className="relative">
+          {/* <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <Filter className="w-4 h-4 text-gray-500" />
             </div>
@@ -260,7 +268,7 @@ export default function EmployeeList() {
               <option value="offline">Offline</option>
               <option value="away">Away</option>
             </select>
-          </div>
+          </div> */}
 
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -273,7 +281,6 @@ export default function EmployeeList() {
             >
               <option value="all">All Roles</option>
               <option value="admin">Admin</option>
-              <option value="manager">Manager</option>
               <option value="user">User</option>
             </select>
           </div>
@@ -317,15 +324,7 @@ export default function EmployeeList() {
                   Role <SortIndicator column="role" />
                 </div>
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                onClick={() => requestSort("status")}
-              >
-                <div className="flex items-center">
-                  Status <SortIndicator column="status" />
-                </div>
-              </th>
+
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
@@ -343,44 +342,50 @@ export default function EmployeeList() {
           <tbody className="bg-white divide-y divide-gray-200">
             {getPaginatedData().length > 0 ? (
               getPaginatedData().map((employee, index) => (
-                <tr key={employee.id || index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {(currentPage - 1) * itemsPerPage + index + 1}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {employee.name}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">
-                      {employee.email}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 capitalize">
-                      {employee.role}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <StatusBadge status={employee.status} />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">
-                      {employee.timeStamp?.seconds}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <ActionMenu
-                        onEdit={() => openEditModal(employee.id)}
-                        onDelete={() => handleDelete(employee.id)}
-                      />
-                    </button>
-                  </td>
-                </tr>
+                <>
+                  <tr
+                    onClick={() => {
+                      setOpenModal(true), setSelectedData(employee);
+                    }}
+                    key={employee.id || index}
+                    className="hover:bg-gray-50 cursor-pointer"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {(currentPage - 1) * itemsPerPage + index + 1}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {employee.name}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">
+                        {employee.email}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900 capitalize">
+                        {employee.role}
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">
+                        {employee.timeStamp?.seconds}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button className="text-gray-400 hover:text-gray-600">
+                        <ActionMenu
+                          onEdit={() => openEditModal(employee.id)}
+                          onDelete={() => handleDelete(employee.id)}
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                </>
               ))
             ) : (
               <tr>
@@ -474,6 +479,11 @@ export default function EmployeeList() {
         mode={modalMode}
         employeeId={selectedEmployeeId}
         fetchData={fetchEmployees}
+      />
+      <EmployeeDetailModal
+        employee={selectedData}
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
       />
     </div>
   );

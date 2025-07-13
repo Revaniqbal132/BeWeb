@@ -26,6 +26,7 @@ const SignUp = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    usia: "",
   });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -80,13 +81,29 @@ const SignUp = () => {
       //     setToastMessage(null);
       //   }
       // }
+      // Ambil ID terakhir dari koleksi users
+      let newId = "10001";
+      const usersSnapshot = await getDoc(doc(db, "meta", "user_counter"));
+      if (usersSnapshot.exists()) {
+        const lastId = usersSnapshot.data().last_id_karyawan || 10000;
+        newId = (parseInt(lastId, 10) + 1).toString();
+        await setDoc(doc(db, "meta", "user_counter"), {
+          last_id_karyawan: newId,
+        });
+      } else {
+        await setDoc(doc(db, "meta", "user_counter"), {
+          last_id_karyawan: newId,
+        });
+      }
+
       const userData = {
+        id_karyawan: newId,
         name: formData.fullName,
         role: "user",
         email: formData.email,
         password: formData.password,
-        status: "online",
         gender: formData.gender,
+        usia: formData.usia,
       };
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -176,6 +193,21 @@ const SignUp = () => {
               <option value="Perempuan">Perempuan</option>
             </select>
             {errors.gender && <p className="text-red-500">{errors.gender}</p>}
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Usia</label>
+            <div className="flex items-center justify-between gap-3 border border-gray-300 mt-1 p-2 w-full rounded-md focus:ring focus:ring-blue-200">
+              <input
+                type="number"
+                name="usia"
+                value={formData.usia}
+                onChange={handleChange}
+                className="w-full outline-none"
+              />
+            </div>
+            {errors.password && (
+              <p className="text-red-500">{errors.password}</p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block mb-1">Password</label>

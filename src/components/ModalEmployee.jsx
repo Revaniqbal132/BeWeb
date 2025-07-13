@@ -20,9 +20,10 @@ const EmployeeModal = ({
     name: "",
     email: "",
     role: "user",
-    status: "offline",
+    gender: "",
     password: "",
     confirmPassword: "",
+    usia: "",
   });
 
   const [error, setError] = useState("");
@@ -44,7 +45,7 @@ const EmployeeModal = ({
               name: employeeData.name || "",
               email: employeeData.email || "",
               role: employeeData.role || "user",
-              status: employeeData.status || "offline",
+              gender: employeeData.gender,
               password: "",
               confirmPassword: "",
             });
@@ -114,6 +115,22 @@ const EmployeeModal = ({
 
     if (!validateForm()) return;
 
+    let newId = "10001";
+    const usersSnapshot = await getDoc(doc(db, "meta", "user_counter"));
+    if (usersSnapshot.exists()) {
+      const lastId = usersSnapshot.data().last_id_karyawan || 10000;
+      newId = (parseInt(lastId, 10) + 1).toString();
+      // Update counter
+      await setDoc(doc(db, "meta", "user_counter"), {
+        last_id_karyawan: newId,
+      });
+    } else {
+      // Jika belum ada counter, buat baru
+      await setDoc(doc(db, "meta", "user_counter"), {
+        last_id_karyawan: newId,
+      });
+    }
+
     try {
       setLoading(true);
 
@@ -122,7 +139,7 @@ const EmployeeModal = ({
           name: formData.name,
           email: formData.email,
           role: formData.role,
-          status: formData.status,
+          gender: formData.gender,
           timeStamp: serverTimestamp(),
         };
 
@@ -140,9 +157,11 @@ const EmployeeModal = ({
           name: formData.name,
           email: formData.email,
           role: formData.role,
-          status: formData.status,
+          gender: formData.gender,
           password: hashedPassword,
           timeStamp: serverTimestamp(),
+          id_karyawan: newId,
+          usia: formData.usia,
         };
 
         await setDoc(doc(db, "users", newUserId), newUser);
@@ -150,7 +169,6 @@ const EmployeeModal = ({
           name: "",
           email: "",
           role: "user",
-          status: "offline",
           password: "",
           confirmPassword: "",
         });
@@ -255,6 +273,23 @@ const EmployeeModal = ({
                   placeholder="john@example.com"
                 />
               </div>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="usia"
+                >
+                  Usia
+                </label>
+                <input
+                  type="number"
+                  id="usia"
+                  name="usia"
+                  value={formData.usia}
+                  onChange={handleChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                  placeholder="17"
+                />
+              </div>
 
               <div className="mb-4">
                 <label
@@ -278,19 +313,19 @@ const EmployeeModal = ({
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="status"
+                  htmlFor="gender"
                 >
-                  Status
+                  Gender
                 </label>
                 <select
-                  id="status"
-                  name="status"
-                  value={formData.status}
+                  id="gender"
+                  name="gender"
+                  value={formData.gender}
                   onChange={handleChange}
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
                 >
-                  <option value="offline">Offline</option>
-                  <option value="online">Online</option>
+                  <option value="offline">Laki-Laki</option>
+                  <option value="online">Perempuan</option>
                 </select>
               </div>
 

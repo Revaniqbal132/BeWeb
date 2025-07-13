@@ -1,55 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, ChevronUp, ChevronDown, Download } from 'lucide-react';
+import { Search, ChevronUp, ChevronDown, Download } from "lucide-react";
 
-
-const DataTable = ({ 
-  data = [], 
+const DataTable = ({
+  data = [],
   title = "Data Table",
   itemsPerPage = 10,
   searchPlaceholder = "Cari...",
-  searchFields = ['fullname', 'email', 'reason'],
+  searchFields = ["fullname", "email", "reason"],
   onRowClick = null,
   enableExport = true,
   exportFileName = "exported-data",
+  setStatusFilter,
+  statusFilter,
+  loading,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
-  const [searchTerm, setSearchTerm] = useState('');
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const status = ["All", "pending", "Approve"];
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
+    return new Date(dateString).toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
   };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case 'approve':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'reject':
-        return 'bg-red-100 text-red-800';
+      case "approve":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "reject":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const sortData = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
     setSortConfig({ key, direction });
   };
 
   const getSortedData = () => {
-    const filteredData = data.filter(item => 
-      searchFields.some(field => 
+    const filteredData = data.filter((item) =>
+      searchFields.some((field) =>
         item[field]?.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
@@ -58,10 +62,10 @@ const DataTable = ({
 
     return [...filteredData].sort((a, b) => {
       if (a[sortConfig.key] < b[sortConfig.key]) {
-        return sortConfig.direction === 'asc' ? -1 : 1;
+        return sortConfig.direction === "asc" ? -1 : 1;
       }
       if (a[sortConfig.key] > b[sortConfig.key]) {
-        return sortConfig.direction === 'asc' ? 1 : -1;
+        return sortConfig.direction === "asc" ? 1 : -1;
       }
       return 0;
     });
@@ -75,9 +79,11 @@ const DataTable = ({
 
   const SortIcon = ({ columnKey }) => {
     if (sortConfig.key !== columnKey) return null;
-    return sortConfig.direction === 'asc' ? 
-      <ChevronUp className="h-4 w-4" /> : 
-      <ChevronDown className="h-4 w-4" />;
+    return sortConfig.direction === "asc" ? (
+      <ChevronUp className="h-4 w-4" />
+    ) : (
+      <ChevronDown className="h-4 w-4" />
+    );
   };
 
   return (
@@ -85,8 +91,45 @@ const DataTable = ({
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="text-2xl font-bold">{title}</CardTitle>
-          
         </div>
+        {loading ? (
+          <div className="flex justify-center my-4">
+            <svg
+              className="animate-spin h-6 w-6 text-gray-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              ></path>
+            </svg>
+          </div>
+        ) : (
+          <div className="flex gap-3">
+            {status.map((item) => (
+              <span
+                onClick={() => setStatusFilter(item)}
+                className={` text-black cursor-pointer px-10 py-1 rounded-lg  ${
+                  item == statusFilter ? "bg-[#14b8a5]" : "bg-gray-300"
+                } ${item == statusFilter ? "text-white" : "text-black"}`}
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        )}
+
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
           <input
@@ -103,48 +146,58 @@ const DataTable = ({
           <table className="w-full min-w-[800px] text-sm">
             <thead>
               <tr className="bg-gray-50">
-                <th 
+                <th
                   className="p-3 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
-                  onClick={() => sortData('fullname')}
+                  onClick={() => sortData("fullname")}
                 >
                   <div className="flex items-center gap-1">
                     Nama
                     <SortIcon columnKey="fullname" />
                   </div>
                 </th>
-                <th className="p-3 text-left font-medium text-gray-600">Email</th>
-                <th 
+                <th className="p-3 text-left font-medium text-gray-600">
+                  Email
+                </th>
+                <th
                   className="p-3 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
-                  onClick={() => sortData('startDate')}
+                  onClick={() => sortData("startDate")}
                 >
                   <div className="flex items-center gap-1">
                     Tanggal Mulai
                     <SortIcon columnKey="startDate" />
                   </div>
                 </th>
-                <th className="p-3 text-left font-medium text-gray-600">Tanggal Selesai</th>
-                <th className="p-3 text-left font-medium text-gray-600">Durasi</th>
-                <th className="p-3 text-left font-medium text-gray-600">Alasan</th>
-                <th 
+                <th className="p-3 text-left font-medium text-gray-600">
+                  Tanggal Selesai
+                </th>
+                <th className="p-3 text-left font-medium text-gray-600">
+                  Durasi
+                </th>
+                <th className="p-3 text-left font-medium text-gray-600">
+                  Alasan
+                </th>
+                <th
                   className="p-3 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
-                  onClick={() => sortData('status')}
+                  onClick={() => sortData("status")}
                 >
                   <div className="flex items-center gap-1">
                     Status
                     <SortIcon columnKey="status" />
                   </div>
                 </th>
-                <th className="p-3 text-left font-medium text-gray-600">Sisa Cuti</th>
+                <th className="p-3 text-left font-medium text-gray-600">
+                  Sisa Cuti
+                </th>
               </tr>
             </thead>
             <tbody>
               {paginatedData.map((item, index) => (
-                <tr 
+                <tr
                   key={item.id}
                   className={`border-t border-gray-200 ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
                   } hover:bg-gray-100 transition-colors ${
-                    onRowClick ? 'cursor-pointer' : ''
+                    onRowClick ? "cursor-pointer" : ""
                   }`}
                   onClick={() => onRowClick && onRowClick(item)}
                 >
@@ -165,31 +218,33 @@ const DataTable = ({
             </tbody>
           </table>
         </div>
-        
+
         {totalPages > 1 && (
           <div className="flex justify-center gap-2 mt-4">
             <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="px-3 py-1 rounded border border-gray-300 disabled:opacity-50"
             >
               Previous
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
                 className={`px-3 py-1 rounded border ${
                   currentPage === page
-                    ? 'bg-blue-500 text-white'
-                    : 'border-gray-300'
+                    ? "bg-blue-500 text-white"
+                    : "border-gray-300"
                 }`}
               >
                 {page}
               </button>
             ))}
             <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
               className="px-3 py-1 rounded border border-gray-300 disabled:opacity-50"
             >

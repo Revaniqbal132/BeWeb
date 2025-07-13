@@ -82,14 +82,14 @@ const Navbar = () => {
               </Link>
             </li>
           )} */}
-          <li className="md:mr-3">
+          {/* <li className="md:mr-3">
             <Link
               href={"/service"}
               className="px-4 py-3  transition-all duration-300 hover:bg-teal-500 hover:text-white rounded"
             >
               Tanggal
             </Link>
-          </li>
+          </li> */}
           {!user ? (
             <>
               <li className="md:mr-3">

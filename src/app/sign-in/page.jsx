@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { useState } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import useAuth from "../hooks/useAuth";
 
 const SignIn = () => {
   const router = useRouter();
@@ -28,6 +29,7 @@ const SignIn = () => {
       [name]: value,
     });
   };
+  const { fetchUserProfile } = useAuth();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -65,9 +67,10 @@ const SignIn = () => {
             router.push("/");
           } else if (docSnap.data().role == "admin") {
             router.push("/admin");
-          }else if (docSnap.data().role == "gudang") {
+          } else if (docSnap.data().role == "gudang") {
             router.push("/gudang");
           }
+          fetchUserProfile(user.uid);
           localStorage.setItem("userProfile", JSON.stringify(docSnap.data()));
         }
       }
