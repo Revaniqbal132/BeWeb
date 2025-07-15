@@ -13,6 +13,12 @@ import { formatCurrency } from "@/utils/formatRupiah";
 import moment from "moment";
 
 const EmployeeLeaveCard = ({ employee, handleCheckboxChange, selectedIds }) => {
+  console.log(employee);
+  const start = new Date(employee.startDate);
+  const end = new Date(employee.endDate);
+
+  const diffTime = end.getTime() - start.getTime();
+  const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
   return (
     <Card className="max-w-md bg-white shadow-lg rounded-lg overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 p-6">
@@ -51,9 +57,7 @@ const EmployeeLeaveCard = ({ employee, handleCheckboxChange, selectedIds }) => {
             <p className="text-sm text-blue-600 font-medium">
               Total Leave Days
             </p>
-            <p className="text-2xl font-bold text-blue-700">
-              {employee.totalCuti} days
-            </p>
+            <p className="text-2xl font-bold text-blue-700">{totalDays} days</p>
           </div>
           <div className="bg-red-50 rounded-lg p-4">
             <p className="text-sm text-red-600 font-medium">Salary cut</p>
@@ -90,7 +94,8 @@ const EmployeeLeaveCard = ({ employee, handleCheckboxChange, selectedIds }) => {
             <div>
               <p className="text-sm text-gray-500">Leave Period</p>
               <p className="text-gray-700">
-                {moment(employee.startDate).format("MMM Do YYYY")} - {moment(employee.endDate).format("MMM Do YYYY")}
+                {moment(employee.startDate).format("MMM Do YYYY")} -{" "}
+                {moment(employee.endDate).format("MMM Do YYYY")}
               </p>
               <p className="text-sm text-gray-600">
                 Duration: {employee.amount} days

@@ -63,6 +63,8 @@ export default function EmployeeList() {
     }
   };
 
+  console.log(employees)
+
   useEffect(() => {
     fetchEmployees();
   }, []);
@@ -253,22 +255,6 @@ export default function EmployeeList() {
             />
           </div>
 
-          {/* Status Filter */}
-          {/* <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Filter className="w-4 h-4 text-gray-500" />
-            </div>
-            <select
-              className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="all">All Statuses</option>
-              <option value="online">Online</option>
-              <option value="offline">Offline</option>
-              <option value="away">Away</option>
-            </select>
-          </div> */}
 
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
