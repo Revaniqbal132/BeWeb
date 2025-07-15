@@ -68,20 +68,6 @@ const SignUp = () => {
       }
       setErrors(newErrors);
 
-      // if (Object.keys(newErrors).length === 0) {
-      //   const userCredential = await createUserWithEmailAndPassword(
-      //     auth,
-      //     formData.email,
-      //     formData.password
-      //   );
-      //   const user = userCredential.user;
-      //   if (user) {
-      //     router.push("/");
-      //     console.log(user);
-      //     setToastMessage(null);
-      //   }
-      // }
-      // Ambil ID terakhir dari koleksi users
       let newId = "10001";
       const usersSnapshot = await getDoc(doc(db, "meta", "user_counter"));
       if (usersSnapshot.exists()) {
@@ -105,6 +91,7 @@ const SignUp = () => {
         gender: formData.gender,
         usia: formData.usia,
       };
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,

@@ -23,6 +23,7 @@ const Payment = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState(data);
   const [statusFilter, setStatusFilter] = useState("All"); // State untuk filter status
+  console.log(data)
 
   const fetchAllData = async () => {
     try {

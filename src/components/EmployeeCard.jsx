@@ -13,7 +13,6 @@ import { formatCurrency } from "@/utils/formatRupiah";
 import moment from "moment";
 
 const EmployeeLeaveCard = ({ employee, handleCheckboxChange, selectedIds }) => {
-  console.log(employee);
   const start = new Date(employee.startDate);
   const end = new Date(employee.endDate);
 
@@ -109,6 +108,14 @@ const EmployeeLeaveCard = ({ employee, handleCheckboxChange, selectedIds }) => {
               <p className="text-sm text-gray-500">Leave Details</p>
               <p className="text-gray-700">Type: {employee.jenisCuti}</p>
               <p className="text-sm text-gray-600">Reason: {employee.reason}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <Clock className="h-5 w-5 text-blue-500" />
+            <div>
+              <p className="text-sm text-gray-500">Total Cuti</p>
+              <p className="text-gray-700">{employee.totalCuti} days</p>
             </div>
           </div>
 
