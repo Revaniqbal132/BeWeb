@@ -16,8 +16,7 @@ const useAuth = () => {
       console.log();
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
-        setUserProfile(userDoc.data());
-        // localStorage.setItem("userProfile", JSON.stringify(userDoc.data()));
+        setUserProfile(userSnap.data());
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);

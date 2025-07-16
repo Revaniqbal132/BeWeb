@@ -154,6 +154,7 @@ const Cuti = () => {
         withDrawalStatus: "nothing",
         balance: 0,
         totalCuti: newTotalCuti,
+        amount: getTimesCuti(),
       };
 
       if (formData.jenisCuti.toLowerCase() === "cuti lahiran") {

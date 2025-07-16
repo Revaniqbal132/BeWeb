@@ -116,7 +116,7 @@ const LeaveRequestModal = ({ isOpen, onClose, data, onSubmit, loading }) => {
               </div>
             </div>
             <div className="flex items-center justify-center">
-              {data.salary == 0 && (
+              {data.salary == 0 && data.status !== 'pending' && (
                 <button
                   disabled={salaryCut == 0}
                   onClick={() => onSubmit(data, salaryCut)}
@@ -127,15 +127,15 @@ const LeaveRequestModal = ({ isOpen, onClose, data, onSubmit, loading }) => {
                   }`}
                 >
                   {loading ? (
-                   <Circles
-                   height="20"
-                   width="20"
-                   color="#ffffff"
-                   ariaLabel="circles-loading"
-                   wrapperStyle={{}}
-                   wrapperClass=""
-                   visible={true}
-                   />
+                    <Circles
+                      height="20"
+                      width="20"
+                      color="#ffffff"
+                      ariaLabel="circles-loading"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                      visible={true}
+                    />
                   ) : (
                     "Submit"
                   )}

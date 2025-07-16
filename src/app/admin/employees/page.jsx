@@ -63,8 +63,6 @@ export default function EmployeeList() {
     }
   };
 
-  console.log(employees)
-
   useEffect(() => {
     fetchEmployees();
   }, []);
